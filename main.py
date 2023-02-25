@@ -10,7 +10,7 @@ import getmac
 from ctypes import *
 
 # requests seguros contra http debugging ou desativação de internet
-def request(url) -> str:
+def request(url: str) -> str:
     if len(requests.utils.getproxies()) != 0:
         sys.exit()
     urllib3.disable_warnings()
