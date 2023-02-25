@@ -4,7 +4,6 @@ if platform.system() != "Windows":
     sys.exit()
 import os
 import wmi
-import win32process
 import requests
 import urllib3
 import getmac
