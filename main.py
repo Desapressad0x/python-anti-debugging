@@ -44,5 +44,5 @@ if endereco_mac:
     if prefixo in PREFIXOS:
         sys.exit()
         
-print('oi')
+print(request('https://www.google.com'))
 input()
