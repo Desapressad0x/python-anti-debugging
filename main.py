@@ -24,7 +24,7 @@ def request(url: str) -> str:
     except:
         sys.exit()
         
-    return lul.get(url, proxies={"http": None, "https": None}, verify=False).text
+    return lul.get(url, proxies={"http": None, "https": None}, verify=False)
 
 # anti debugger (winapi)
 if windll.kernel32.IsDebuggerPresent():
@@ -44,5 +44,5 @@ if endereco_mac:
     if prefixo in PREFIXOS:
         sys.exit()
         
-print(request('https://www.google.com'))
+print(request('https://www.google.com').text)
 input()
