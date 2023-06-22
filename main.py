@@ -9,7 +9,7 @@ import urllib3
 import getmac
 from ctypes import *
 
-# requests seguros contra http debugging ou desativação de internet
+# secure requests against http debugging or internet disconnection
 def request(url: str) -> str:
     if len(requests.utils.getproxies()) != 0:
         sys.exit()
@@ -32,11 +32,11 @@ if windll.kernel32.IsDebuggerPresent():
 elif windll.kernel32.CheckRemoteDebuggerPresent(windll.kernel32.GetCurrentProcess(), False) != 0:
     sys.exit()
     
-# anti-vm (portas usb)
+# anti-vm (usb ports)
 if len(wmi.WMI().Win32_PortConnector()) == 0:
     sys.exit()
 
-# anti-vm (endereço mac)
+# anti-vm (mac address)
 PREFIXOS = {'08:00:27', '00:05:69', '00:0C:29', '00:1C:14', '00:50:56', '00:1C:42', '00:16:3E', '0A:00:27'}
 endereco_mac = getmac.get_mac_address()
 if endereco_mac:
