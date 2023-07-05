@@ -1,16 +1,25 @@
 import platform
+if platform.system() != "Windows":  sys.exit()
 import sys
-if platform.system() != "Windows":
-    sys.exit()
-import os
+import re
+import uuid
 import wmi
 import requests
+import subprocess
 import urllib3
-import getmac
 from ctypes import *
+import os
 
-# secure requests against http debugging or internet disconnection
-def request(url: str) -> str:
+w = wmi.WMI()
+
+# anti-vm (virtualenv)
+def get_prefix():
+    return getattr(sys, "base_prefix", None) or getattr(sys, "real_prefix", None) or sys.prefix
+if get_prefix() != sys.prefix:
+    sys.exit()
+
+# secure requests against http debugging or internet disablement
+def request(url):
     if len(requests.utils.getproxies()) != 0:
         sys.exit()
     urllib3.disable_warnings()
@@ -20,7 +29,7 @@ def request(url: str) -> str:
         if k.lower().endswith('_proxy'):
             sys.exit()
     try:
-        lul.get('https://www.google.com', proxies={"http": None, "https": None}, verify=False)
+        lul.get('https://www.google.com', proxies={"http": None, "https": None})
     except:
         sys.exit()
         
@@ -33,16 +42,47 @@ elif windll.kernel32.CheckRemoteDebuggerPresent(windll.kernel32.GetCurrentProces
     sys.exit()
     
 # anti-vm (usb ports)
-if len(wmi.WMI().Win32_PortConnector()) == 0:
-    sys.exit()
+if len(w.Win32_PortConnector()) == 0:
+    sys.exit()()
 
 # anti-vm (mac address)
-PREFIXOS = {'08:00:27', '00:05:69', '00:0C:29', '00:1C:14', '00:50:56', '00:1C:42', '00:16:3E', '0A:00:27'}
-endereco_mac = getmac.get_mac_address()
-if endereco_mac:
-    prefixo = endereco_mac[:8].upper().replace('-', ':')
-    if prefixo in PREFIXOS:
-        sys.exit()
-        
-print(request('https://www.google.com').text)
+mac = ':'.join(re.findall('..', '%012x' % uuid.getnode()))
+macs = request('https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/mac_list.txt')
+if mac[:8] in macs:
+  sys.exit()
+  
+# anti-vm (uuid)
+uuid = w.Win32_ComputerSystemProduct()[0].UUID
+uuids = request('https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/hwid_list.txt')
+if uuid in uuids:
+  sys.exit()
+    
+# anti-vm (ip)
+ip = request('https://api.ipify.org')
+ips = request('https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/ip_list.txt')
+if ip in ips:
+  sys.exit()
+  
+# anti-vm (bio guid)
+guids = request('https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/BIOS_Serial_List.txt')
+for bio in w.Win32_BIOS():
+  bio_ser = bio.SerialNumber
+  if bio_ser in guids:
+    sys.exit()
+    
+# anti-vm (motherboard)
+boards = request('https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/BaseBoard_Serial_List.txt')
+for board in w.Win32_BaseBoard():
+  board_ser = board.SerialNumber
+  if board_ser in boards:
+    sys.exit()
+    
+# anti-vm (serial)
+serials = request('https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/DiskDrive_Serial_List.txt')
+for disk in w.Win32_DiskDrive():
+  disk_ser = disk.SerialNumber
+  if disk_ser in serials:
+    sys.exit()
+
+print(request('https://youtube.com').text)
 input()
